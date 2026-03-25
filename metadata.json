@@ -1,0 +1,5 @@
+{
+  "name": "Toko Buah Sumber",
+  "description": "Aplikasi manajemen toko buah dengan fitur kasir, inventaris FIFO, dan laporan keuangan akuntansi.",
+  "requestFramePermissions": []
+}
