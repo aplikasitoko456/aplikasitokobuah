@@ -11,6 +11,7 @@ const pool = new Pool({
   ssl: {
     rejectUnauthorized: false,
   },
+  connectionTimeoutMillis: 5000, // Beri batas waktu 5 detik
 });
 
 const app = express();
@@ -18,6 +19,10 @@ app.use(express.json());
 
 // Database Initialization
 const initDb = async () => {
+  if (!process.env.DATABASE_URL) {
+    console.error("DATABASE_URL is missing. Skipping DB initialization.");
+    return;
+  }
   try {
     // Migrations
     await pool.query("ALTER TABLE transactions ADD COLUMN IF NOT EXISTS description TEXT");
@@ -162,9 +167,16 @@ const initDb = async () => {
 
 let isDbInitialized = false;
 const ensureDb = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
-  if (!isDbInitialized) {
-    await initDb();
-    isDbInitialized = true;
+  // Lewati inisialisasi untuk health check agar tidak gantung
+  if (req.path === '/api/health') return next();
+
+  if (!isDbInitialized && process.env.DATABASE_URL) {
+    try {
+      await initDb();
+      isDbInitialized = true;
+    } catch (err) {
+      console.error("Failed to initialize database on request:", err.message);
+    }
   }
   next();
 };
@@ -174,13 +186,14 @@ app.use(ensureDb);
 // API Routes
 app.get("/api/health", async (req, res) => {
   try {
-    const dbStatus = await pool.query("SELECT 1");
+    if (!process.env.DATABASE_URL) throw new Error("DATABASE_URL is missing");
+    await pool.query("SELECT 1");
     res.json({ 
       status: "ok", 
       database: "connected",
       env: {
-        hasDbUrl: !!process.env.DATABASE_URL,
-        dbUrlLength: process.env.DATABASE_URL?.length || 0
+        hasDbUrl: true,
+        dbUrlLength: process.env.DATABASE_URL.length
       }
     });
   } catch (err) {
