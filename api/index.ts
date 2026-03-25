@@ -1,4 +1,4 @@
-import app from "../src/server/app";
+import app from "../src/server/app.js";
 
 // Log status variabel lingkungan saat startup
 if (!process.env.DATABASE_URL) {
