@@ -262,9 +262,20 @@ app.post("/api/purchases", async (req, res) => {
       );
 
       const formattedQty = quantity.toString().replace('.', ',');
+      // Jurnal Pembelian (Laba Rugi)
       await client.query(
         "INSERT INTO journal_entries (description, account_name, debit, transaction_id) VALUES ($1, $2, $3, $4)",
-        [`Pembelian buah ${fruitName} ${formattedQty} kg`, 'Persediaan', total_price, transaction_id]
+        [`Pembelian buah ${fruitName} ${formattedQty} kg`, 'Pembelian', total_price, transaction_id]
+      );
+
+      // Jurnal Persediaan (Neraca vs Persediaan Akhir di HPP)
+      await client.query(
+        "INSERT INTO journal_entries (description, account_name, debit, transaction_id) VALUES ($1, $2, $3, $4)",
+        [`Pencatatan persediaan ${fruitName}`, 'Persediaan Barang', total_price, transaction_id]
+      );
+      await client.query(
+        "INSERT INTO journal_entries (description, account_name, credit, transaction_id) VALUES ($1, $2, $3, $4)",
+        [`Penyesuaian persediaan akhir ${fruitName}`, 'Persediaan Akhir', total_price, transaction_id]
       );
     }
 
@@ -347,7 +358,12 @@ app.post("/api/sales", async (req, res) => {
       );
       await client.query(
         "INSERT INTO journal_entries (description, account_name, credit, transaction_id) VALUES ($1, $2, $3, $4)",
-        [`Pengurangan persediaan ${fruitName}`, 'Persediaan', totalHPP, transaction_id]
+        [`Pengurangan persediaan ${fruitName}`, 'Persediaan Barang', totalHPP, transaction_id]
+      );
+      // Kurangi Persediaan Akhir (Debit) agar saldo Persediaan Akhir di P&L tetap sinkron dengan stok fisik
+      await client.query(
+        "INSERT INTO journal_entries (description, account_name, debit, transaction_id) VALUES ($1, $2, $3, $4)",
+        [`Pengurangan persediaan akhir ${fruitName}`, 'Persediaan Akhir', totalHPP, transaction_id]
       );
     }
 
@@ -688,14 +704,16 @@ app.get("/api/reports/profit-loss", async (req, res) => {
     const hppRes = await pool.query("SELECT COALESCE(SUM(debit), 0) as total FROM journal_entries WHERE account_name = 'HPP'");
     const hpp = parseFloat(hppRes.rows[0].total);
 
-    const beginningInventoryRes = await pool.query("SELECT COALESCE(SUM(debit), 0) as total FROM journal_entries WHERE account_name = 'Persediaan Awal'");
+    const beginningInventoryRes = await pool.query("SELECT COALESCE(SUM(debit) - SUM(credit), 0) as total FROM journal_entries WHERE account_name = 'Persediaan Awal'");
     const beginningInventory = parseFloat(beginningInventoryRes.rows[0].total);
 
-    const purchasesRes = await pool.query("SELECT COALESCE(SUM(debit), 0) as total FROM journal_entries WHERE account_name = 'Pembelian'");
+    const purchasesRes = await pool.query("SELECT COALESCE(SUM(debit) - SUM(credit), 0) as total FROM journal_entries WHERE account_name = 'Pembelian'");
     const purchases = parseFloat(purchasesRes.rows[0].total);
 
-    const endingInventoryRes = await pool.query("SELECT COALESCE(SUM(credit), 0) as total FROM journal_entries WHERE account_name = 'Persediaan Akhir'");
+    const endingInventoryRes = await pool.query("SELECT COALESCE(SUM(credit) - SUM(debit), 0) as total FROM journal_entries WHERE account_name = 'Persediaan Akhir'");
     const endingInventory = parseFloat(endingInventoryRes.rows[0].total);
+
+    const calculatedHPP = beginningInventory + purchases - endingInventory;
 
     const expenseCategories = [
       'Biaya Gaji', 'Biaya ATK', 'Biaya Konsumsi', 'Biaya BPJS', 'Biaya Sewa',
@@ -707,7 +725,7 @@ app.get("/api/reports/profit-loss", async (req, res) => {
     let totalExpenses = 0;
 
     for (const cat of expenseCategories) {
-      const res = await pool.query("SELECT COALESCE(SUM(debit), 0) as total FROM journal_entries WHERE account_name = $1", [cat]);
+      const res = await pool.query("SELECT COALESCE(SUM(debit) - SUM(credit), 0) as total FROM journal_entries WHERE account_name = $1", [cat]);
       const val = parseFloat(res.rows[0].total);
       const key = cat.toLowerCase().replace(/, /g, '').replace(/ /g, '');
       const finalKey = key.startsWith('biaya') ? key : 'biaya' + key.charAt(0).toUpperCase() + key.slice(1);
@@ -720,7 +738,7 @@ app.get("/api/reports/profit-loss", async (req, res) => {
     }
     expenses.total = totalExpenses;
 
-    const grossProfit = sales - hpp;
+    const grossProfit = sales - calculatedHPP;
     const netProfit = grossProfit - totalExpenses;
 
     res.json({
@@ -728,7 +746,7 @@ app.get("/api/reports/profit-loss", async (req, res) => {
       beginningInventory,
       purchases,
       endingInventory,
-      hpp,
+      hpp: calculatedHPP,
       grossProfit,
       expenses,
       netProfit
