@@ -160,10 +160,41 @@ const initDb = async () => {
   }
 };
 
-// Call initDb once when the module is loaded (for serverless environments)
-initDb();
+let isDbInitialized = false;
+const ensureDb = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+  if (!isDbInitialized) {
+    await initDb();
+    isDbInitialized = true;
+  }
+  next();
+};
+
+app.use(ensureDb);
 
 // API Routes
+app.get("/api/health", async (req, res) => {
+  try {
+    const dbStatus = await pool.query("SELECT 1");
+    res.json({ 
+      status: "ok", 
+      database: "connected",
+      env: {
+        hasDbUrl: !!process.env.DATABASE_URL,
+        dbUrlLength: process.env.DATABASE_URL?.length || 0
+      }
+    });
+  } catch (err) {
+    res.status(500).json({ 
+      status: "error", 
+      database: "disconnected",
+      error: err.message,
+      env: {
+        hasDbUrl: !!process.env.DATABASE_URL
+      }
+    });
+  }
+});
+
 app.get("/api/fruits", async (req, res) => {
   try {
     const result = await pool.query("SELECT * FROM fruits ORDER BY name ASC");
