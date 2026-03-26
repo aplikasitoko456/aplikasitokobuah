@@ -56,7 +56,7 @@ export default function App() {
   return (
     <div className="flex flex-col h-screen bg-[#F8F9FA] text-[#1A1A1A] font-sans overflow-hidden">
       {/* Header with Fruit Background - More Compact */}
-      <header className="relative h-28 w-full overflow-hidden flex items-end p-6">
+      <header className="relative h-20 sm:h-28 w-full overflow-hidden flex items-end p-4 sm:p-6">
         <div className="absolute inset-0 z-0">
           <img 
             src="https://images.unsplash.com/photo-1610832958506-aa56368176cf?q=80&w=2070&auto=format&fit=crop" 
@@ -66,19 +66,19 @@ export default function App() {
           />
         </div>
         <div className="relative z-10 text-white">
-          <div className="flex items-center gap-2 mb-1">
-            <Store size={20} className="text-yellow-400" />
-            <h2 className="text-2xl font-black tracking-tight uppercase">Toko Buah Sumber</h2>
+          <div className="flex items-center gap-2 mb-0.5">
+            <Store size={16} className="text-yellow-400" />
+            <h2 className="text-xl sm:text-2xl font-black tracking-tight uppercase leading-none">Toko Buah Sumber</h2>
           </div>
-          <div className="flex items-center gap-2 opacity-80">
-            <MapPin size={12} />
-            <p className="text-xs font-medium italic">Jalan Andi Toro, Kabupaten Gowa</p>
+          <div className="flex items-center gap-1.5 opacity-80">
+            <MapPin size={10} />
+            <p className="text-[10px] font-medium italic">Jalan Andi Toro, Gowa</p>
           </div>
         </div>
       </header>
 
       {/* Main Content Area - Reduced Padding */}
-      <main className="flex-1 p-6 pb-24 overflow-y-auto">
+      <main className="flex-1 p-4 sm:p-6 pb-20 sm:pb-24 overflow-y-auto">
         <AnimatePresence mode="wait">
           <motion.div
             key={activeMenu}
@@ -252,21 +252,21 @@ function KasirModule({ fruits }: { fruits: Fruit[] }) {
         </button>
       </div>
 
-      <form onSubmit={handleSubmit} className="bg-white p-6 rounded-2xl shadow-xl border border-[#E9ECEF]">
-        <div className="space-y-3 mb-6">
-          <div className="grid grid-cols-[2fr_1fr_1.5fr_40px] gap-4 px-2">
-            <label className="text-[10px] font-black uppercase tracking-widest text-[#ADB5BD]">Pilih Buah</label>
-            <label className="text-[10px] font-black uppercase tracking-widest text-[#ADB5BD]">Berat (kg)</label>
-            <label className="text-[10px] font-black uppercase tracking-widest text-[#ADB5BD]">Total Harga</label>
+      <form onSubmit={handleSubmit} className="bg-white p-4 sm:p-6 rounded-xl sm:rounded-2xl shadow-lg border border-[#E9ECEF]">
+        <div className="space-y-2 mb-4">
+          <div className="grid grid-cols-[1.5fr_0.8fr_1fr_32px] gap-2 px-1">
+            <label className="text-[9px] font-black uppercase tracking-widest text-[#ADB5BD]">Buah</label>
+            <label className="text-[9px] font-black uppercase tracking-widest text-[#ADB5BD]">kg</label>
+            <label className="text-[9px] font-black uppercase tracking-widest text-[#ADB5BD]">Harga</label>
             <div></div>
           </div>
 
           {items.map((item, index) => (
-            <div key={index} className="grid grid-cols-[2fr_1fr_1.5fr_40px] gap-4 items-center">
+            <div key={index} className="grid grid-cols-[1.5fr_0.8fr_1fr_32px] gap-2 items-center">
               <select 
                 value={item.fruitId}
                 onChange={(e) => updateItem(index, "fruitId", e.target.value)}
-                className="w-full p-3 bg-[#F8F9FA] border-none rounded-xl focus:ring-2 focus:ring-[#1A1A1A] outline-none transition-all text-sm"
+                className="w-full p-2 bg-[#F8F9FA] border-none rounded-lg focus:ring-2 focus:ring-[#1A1A1A] outline-none transition-all text-xs"
                 required
               >
                 <option value="">-- Pilih --</option>
@@ -284,7 +284,7 @@ function KasirModule({ fruits }: { fruits: Fruit[] }) {
                     updateItem(index, "quantity", val);
                   }
                 }}
-                className="w-full p-3 bg-[#F8F9FA] border-none rounded-xl focus:ring-2 focus:ring-[#1A1A1A] outline-none transition-all text-sm"
+                className="w-full p-2 bg-[#F8F9FA] border-none rounded-lg focus:ring-2 focus:ring-[#1A1A1A] outline-none transition-all text-xs"
                 placeholder="0,00"
                 required
               />
@@ -294,7 +294,7 @@ function KasirModule({ fruits }: { fruits: Fruit[] }) {
                 onChange={(val) => updateItem(index, "totalPrice", val)}
                 readOnly={tab === "penjualan"}
                 className={cn(
-                  "w-full p-3 border-none rounded-xl focus:ring-2 focus:ring-[#1A1A1A] outline-none transition-all text-sm",
+                  "w-full p-2 border-none rounded-lg focus:ring-2 focus:ring-[#1A1A1A] outline-none transition-all text-xs",
                   tab === "penjualan" ? "bg-[#E9ECEF] cursor-not-allowed" : "bg-[#F8F9FA]"
                 )}
                 placeholder="0"
@@ -304,10 +304,10 @@ function KasirModule({ fruits }: { fruits: Fruit[] }) {
               <button 
                 type="button" 
                 onClick={() => removeItem(index)}
-                className="p-2 text-red-400 hover:text-red-600 transition-colors disabled:opacity-30"
+                className="p-1 text-red-400 hover:text-red-600 transition-colors disabled:opacity-30"
                 disabled={items.length === 1}
               >
-                <Plus className="rotate-45" size={20} />
+                <Plus className="rotate-45" size={16} />
               </button>
             </div>
           ))}
@@ -402,10 +402,10 @@ function KinerjaModule() {
 
       <div 
         onClick={() => setShowDetails(!showDetails)}
-        className="bg-white p-8 rounded-2xl shadow-xl border border-[#E9ECEF] flex flex-col items-center justify-center text-center cursor-pointer hover:border-[#1A1A1A] transition-all group"
+        className="bg-white p-6 sm:p-8 rounded-xl sm:rounded-2xl shadow-lg border border-[#E9ECEF] flex flex-col items-center justify-center text-center cursor-pointer hover:border-[#1A1A1A] transition-all group"
       >
-        <p className="text-[#ADB5BD] font-bold uppercase tracking-[0.2em] mb-2 group-hover:text-[#1A1A1A] transition-colors">Total Penjualan</p>
-        <h3 className="text-5xl font-black tracking-tighter mb-2">
+        <p className="text-[#ADB5BD] font-bold uppercase tracking-[0.2em] text-[10px] sm:text-xs mb-1 group-hover:text-[#1A1A1A] transition-colors">Total Penjualan</p>
+        <h3 className="text-3xl sm:text-5xl font-black tracking-tighter mb-1">
           {formatCurrency(parseFloat(data.total_sales || "0"))}
         </h3>
         <div className="h-1 w-24 bg-[#1A1A1A] rounded-full"></div>
@@ -499,27 +499,27 @@ function PersediaanModule() {
 
   return (
     <div className="max-w-5xl">
-      <div className="grid grid-cols-3 gap-6 mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
         {inventory.map((item, idx) => (
           <div 
             key={idx} 
             onClick={() => setSelectedFruit(item.name)}
             className={cn(
-              "bg-white p-6 rounded-2xl shadow-lg border transition-all group cursor-pointer",
+              "bg-white p-4 rounded-xl shadow-md border transition-all group cursor-pointer",
               selectedFruit === item.name ? "border-[#1A1A1A] ring-2 ring-[#1A1A1A]/10" : "border-[#E9ECEF] hover:border-[#1A1A1A]"
             )}
           >
-            <div className="flex justify-between items-start mb-4">
+            <div className="flex justify-between items-start mb-3">
               <div className={cn(
-                "p-2 rounded-xl transition-all",
+                "p-1.5 rounded-lg transition-all",
                 selectedFruit === item.name ? "bg-[#1A1A1A] text-white" : "bg-[#F8F9FA] group-hover:bg-[#1A1A1A] group-hover:text-white"
               )}>
-                <Package size={20} />
+                <Package size={16} />
               </div>
-              <span className="text-[10px] font-black text-[#ADB5BD] uppercase tracking-widest">In Stock</span>
+              <span className="text-[9px] font-black text-[#ADB5BD] uppercase tracking-widest">In Stock</span>
             </div>
-            <h4 className="text-xl font-bold mb-1">{item.name}</h4>
-            <p className="text-2xl font-black text-[#1A1A1A]">{formatNumber(item.total_stock || 0)} <span className="text-xs font-medium text-[#6C757D]">kg</span></p>
+            <h4 className="text-lg font-bold mb-0.5">{item.name}</h4>
+            <p className="text-xl font-black text-[#1A1A1A]">{formatNumber(item.total_stock || 0)} <span className="text-[10px] font-medium text-[#6C757D]">kg</span></p>
           </div>
         ))}
       </div>
@@ -588,10 +588,10 @@ function PengaturanModule({ fruits, onUpdate }: { fruits: Fruit[], onUpdate: () 
   };
 
   return (
-    <div className="grid grid-cols-2 gap-8 max-w-6xl">
-      <div className="bg-white p-6 rounded-2xl shadow-lg border border-[#E9ECEF]">
-        <h3 className="text-xl font-bold mb-6 flex items-center gap-3">
-          <Plus className="text-[#1A1A1A]" />
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-6xl">
+      <div className="bg-white p-4 sm:p-6 rounded-xl shadow-md border border-[#E9ECEF]">
+        <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
+          <Plus size={18} className="text-[#1A1A1A]" />
           Tambah Buah Baru
         </h3>
         <form onSubmit={handleAdd} className="space-y-6">
@@ -921,50 +921,50 @@ function LaporanModule() {
       </div>
 
       {tab === "jurnal" ? (
-        <div className="bg-white p-6 rounded-2xl shadow-lg border border-[#E9ECEF]">
-          <div className="flex justify-between items-center mb-6">
-            <h3 className="text-xl font-bold">Jurnal Umum</h3>
+        <div className="bg-white p-4 sm:p-6 rounded-xl shadow-md border border-[#E9ECEF]">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-lg font-bold">Jurnal Umum</h3>
             <button 
               onClick={() => setShowAddJournal(true)}
-              className="px-6 py-2 bg-[#1A1A1A] text-white rounded-xl font-bold flex items-center gap-2 hover:bg-black transition-all"
+              className="px-4 py-1.5 bg-[#1A1A1A] text-white rounded-lg text-sm font-bold flex items-center gap-2 hover:bg-black transition-all"
             >
-              <Plus size={18} /> Tambah Jurnal
+              <Plus size={16} /> Jurnal
             </button>
           </div>
           
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
+            <table className="w-full text-left border-collapse min-w-[600px]">
               <thead>
                 <tr className="border-b-2 border-[#F8F9FA]">
-                  <th className="py-4 text-xs font-black uppercase tracking-widest text-[#ADB5BD]">Tanggal</th>
-                  <th className="py-4 text-xs font-black uppercase tracking-widest text-[#ADB5BD]">Keterangan</th>
-                  <th className="py-4 text-xs font-black uppercase tracking-widest text-[#ADB5BD]">Akun</th>
-                  <th className="py-4 text-xs font-black uppercase tracking-widest text-[#ADB5BD] text-right">Debit</th>
-                  <th className="py-4 text-xs font-black uppercase tracking-widest text-[#ADB5BD] text-right">Kredit</th>
-                  <th className="py-4 text-xs font-black uppercase tracking-widest text-[#ADB5BD] text-center">Aksi</th>
+                  <th className="py-3 text-[9px] font-black uppercase tracking-widest text-[#ADB5BD]">Tanggal</th>
+                  <th className="py-3 text-[9px] font-black uppercase tracking-widest text-[#ADB5BD]">Keterangan</th>
+                  <th className="py-3 text-[9px] font-black uppercase tracking-widest text-[#ADB5BD]">Akun</th>
+                  <th className="py-3 text-[9px] font-black uppercase tracking-widest text-[#ADB5BD] text-right">Debit</th>
+                  <th className="py-3 text-[9px] font-black uppercase tracking-widest text-[#ADB5BD] text-right">Kredit</th>
+                  <th className="py-3 text-[9px] font-black uppercase tracking-widest text-[#ADB5BD] text-center">Aksi</th>
                 </tr>
               </thead>
               <tbody>
                 {journals.map(j => (
                   <tr key={j.id} className="border-b border-[#F8F9FA] hover:bg-[#F8F9FA] transition-all">
-                    <td className="py-4 text-sm">{format(new Date(j.date), "dd/MM/yyyy HH:mm")}</td>
-                    <td className="py-4 text-sm font-medium">{j.description}</td>
-                    <td className="py-4 text-sm">{j.account_name}</td>
-                    <td className="py-4 text-sm text-right font-mono">{j.debit > 0 ? formatCurrency(j.debit) : "-"}</td>
-                    <td className="py-4 text-sm text-right font-mono">{j.credit > 0 ? formatCurrency(j.credit) : "-"}</td>
-                    <td className="py-4 text-sm text-center">
-                      <div className="flex justify-center gap-2">
+                    <td className="py-3 text-[11px]">{format(new Date(j.date), "dd/MM/yy HH:mm")}</td>
+                    <td className="py-3 text-[11px] font-medium">{j.description}</td>
+                    <td className="py-3 text-[11px]">{j.account_name}</td>
+                    <td className="py-3 text-[11px] text-right font-mono">{j.debit > 0 ? formatCurrency(j.debit) : "-"}</td>
+                    <td className="py-3 text-[11px] text-right font-mono">{j.credit > 0 ? formatCurrency(j.credit) : "-"}</td>
+                    <td className="py-3 text-[11px] text-center">
+                      <div className="flex justify-center gap-1">
                         <button 
                           onClick={() => startEditing(j)}
-                          className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                          className="p-1 text-blue-600 hover:bg-blue-50 rounded transition-colors"
                         >
-                          <Edit2 size={16} />
+                          <Edit2 size={14} />
                         </button>
                         <button 
                           onClick={() => setShowDeleteConfirm(j.id)}
-                          className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                          className="p-1 text-red-600 hover:bg-red-50 rounded transition-colors"
                         >
-                          <Trash2 size={16} />
+                          <Trash2 size={14} />
                         </button>
                       </div>
                     </td>
@@ -975,11 +975,11 @@ function LaporanModule() {
           </div>
         </div>
       ) : tab === "rugilaba" ? (
-        <div className="flex flex-col gap-6">
-          <div className="bg-white p-8 rounded-2xl shadow-lg border border-[#E9ECEF] max-w-3xl mx-auto w-full">
-            <div className="text-center mb-6">
-              <h3 className="text-xl font-bold uppercase tracking-widest">Laporan Rugi Laba</h3>
-              <p className="text-[#ADB5BD] text-sm">Periode Berjalan</p>
+        <div className="flex flex-col gap-4">
+          <div className="bg-white p-4 sm:p-8 rounded-xl shadow-md border border-[#E9ECEF] max-w-3xl mx-auto w-full">
+            <div className="text-center mb-4">
+              <h3 className="text-lg font-bold uppercase tracking-widest">Laporan Rugi Laba</h3>
+              <p className="text-[#ADB5BD] text-xs">Periode Berjalan</p>
             </div>
             
             {report && (
@@ -1065,10 +1065,10 @@ function LaporanModule() {
           </div>
         </div>
       ) : tab === "neraca" ? (
-        <div className="bg-white p-8 rounded-2xl shadow-lg border border-[#E9ECEF] max-w-4xl mx-auto w-full">
-          <div className="text-center mb-6">
-            <h3 className="text-xl font-bold uppercase tracking-widest">Neraca</h3>
-            <p className="text-[#ADB5BD] text-sm">Posisi Keuangan</p>
+        <div className="bg-white p-4 sm:p-8 rounded-xl shadow-md border border-[#E9ECEF] max-w-4xl mx-auto w-full">
+          <div className="text-center mb-4">
+            <h3 className="text-lg font-bold uppercase tracking-widest">Neraca</h3>
+            <p className="text-[#ADB5BD] text-xs">Posisi Keuangan</p>
           </div>
 
           {balanceSheet && (

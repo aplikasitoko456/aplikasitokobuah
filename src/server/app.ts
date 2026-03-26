@@ -438,7 +438,7 @@ app.get("/api/performance/details", async (req, res) => {
           ) as day
         )
         SELECT 
-          CASE to_char(d.day, 'IDD')
+          CASE to_char(d.day, 'ID')
             WHEN '1' THEN 'Senin'
             WHEN '2' THEN 'Selasa'
             WHEN '3' THEN 'Rabu'
