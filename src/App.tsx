@@ -321,13 +321,13 @@ function KasirModule({ fruits }: { fruits: Fruit[] }) {
           </button>
         </div>
 
-        <div className="grid grid-cols-2 gap-8 mb-8 pt-8 border-t border-[#F8F9FA]">
-          <div className="space-y-2">
-            <label className="text-xs font-bold uppercase tracking-widest text-[#ADB5BD]">Metode Pembayaran</label>
+        <div className="grid grid-cols-2 gap-4 mb-4 pt-4 border-t border-[#F8F9FA]">
+          <div className="space-y-1">
+            <label className="text-[9px] font-bold uppercase tracking-widest text-[#ADB5BD]">Metode Pembayaran</label>
             <select 
               value={paymentMethod}
               onChange={(e) => setPaymentMethod(e.target.value)}
-              className="w-full p-4 bg-[#F8F9FA] border-none rounded-xl focus:ring-2 focus:ring-[#1A1A1A] outline-none transition-all"
+              className="w-full p-1.5 bg-[#F8F9FA] border-none rounded-lg focus:ring-2 focus:ring-[#1A1A1A] outline-none transition-all text-[10px]"
               required
             >
               <option value="cash">Cash</option>
@@ -336,9 +336,9 @@ function KasirModule({ fruits }: { fruits: Fruit[] }) {
             </select>
           </div>
 
-          <div className="space-y-2 text-right">
-            <label className="text-xs font-bold uppercase tracking-widest text-[#ADB5BD]">Grand Total</label>
-            <p className="text-4xl font-black tracking-tighter">{formatCurrency(grandTotal)}</p>
+          <div className="space-y-1 text-right">
+            <label className="text-[9px] font-bold uppercase tracking-widest text-[#ADB5BD]">Grand Total</label>
+            <p className="text-lg font-black tracking-tighter">{formatCurrency(grandTotal)}</p>
           </div>
         </div>
 
@@ -402,10 +402,10 @@ function KinerjaModule() {
 
       <div 
         onClick={() => setShowDetails(!showDetails)}
-        className="bg-white p-6 sm:p-8 rounded-xl sm:rounded-2xl shadow-lg border border-[#E9ECEF] flex flex-col items-center justify-center text-center cursor-pointer hover:border-[#1A1A1A] transition-all group"
+        className="bg-white p-6 rounded-xl shadow-lg border border-[#E9ECEF] flex flex-col items-center justify-center text-center cursor-pointer hover:border-[#1A1A1A] transition-all group"
       >
-        <p className="text-[#ADB5BD] font-bold uppercase tracking-[0.2em] text-[10px] sm:text-xs mb-1 group-hover:text-[#1A1A1A] transition-colors">Total Penjualan</p>
-        <h3 className="text-3xl sm:text-5xl font-black tracking-tighter mb-1">
+        <p className="text-[#ADB5BD] font-bold uppercase tracking-[0.2em] text-[10px] mb-1 group-hover:text-[#1A1A1A] transition-colors">Total Penjualan</p>
+        <h3 className="text-2xl sm:text-4xl font-black tracking-tighter mb-1">
           {formatCurrency(parseFloat(data.total_sales || "0"))}
         </h3>
         <div className="h-1 w-24 bg-[#1A1A1A] rounded-full"></div>
@@ -418,31 +418,31 @@ function KinerjaModule() {
           animate={{ opacity: 1, y: 0 }}
           className="mt-8 bg-white rounded-3xl shadow-xl border border-[#E9ECEF] overflow-hidden"
         >
-          <div className="p-6 border-b border-[#F8F9FA] flex justify-between items-center">
-            <h4 className="font-bold text-lg">Rincian Penjualan - {
+          <div className="p-4 border-b border-[#F8F9FA] flex justify-between items-center">
+            <h4 className="font-bold text-base">Rincian Penjualan - {
               period === "day" ? "Hari Ini" : 
               period === "week" ? "Minggu Ini" : 
               period === "month" ? "Bulan Ini" : "Tahun Ini"
             }</h4>
-            <button onClick={() => setShowDetails(false)} className="text-[#ADB5BD] hover:text-[#1A1A1A]"><X size={20} /></button>
+            <button onClick={() => setShowDetails(false)} className="text-[#ADB5BD] hover:text-[#1A1A1A]"><X size={18} /></button>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-left">
               <thead>
-                <tr className="bg-[#F8F9FA] text-[10px] font-black uppercase tracking-widest text-[#ADB5BD]">
+                <tr className="bg-[#F8F9FA] text-[9px] font-black uppercase tracking-widest text-[#ADB5BD]">
                   {period === 'day' ? (
                     <>
-                      <th className="px-6 py-4">Tanggal</th>
-                      <th className="px-6 py-4">Keterangan</th>
-                      <th className="px-6 py-4 text-right">Nominal</th>
+                      <th className="px-4 py-2">Tanggal</th>
+                      <th className="px-4 py-2">Keterangan</th>
+                      <th className="px-4 py-2 text-right">Nominal</th>
                     </>
                   ) : (
                     <>
-                      <th className="px-6 py-4">{
+                      <th className="px-4 py-2">{
                         period === 'week' ? 'Hari' : 
                         period === 'month' ? 'Tanggal' : 'Bulan'
                       }</th>
-                      <th className="px-6 py-4 text-right">Total Penjualan</th>
+                      <th className="px-4 py-2 text-right">Total Penjualan</th>
                     </>
                   )}
                 </tr>
@@ -452,14 +452,14 @@ function KinerjaModule() {
                   <tr key={idx} className="hover:bg-[#F8F9FA]/50 transition-colors">
                     {period === 'day' ? (
                       <>
-                        <td className="px-6 py-4 text-sm font-medium">{new Date(item.date).toLocaleString('id-ID')}</td>
-                        <td className="px-6 py-4 text-sm">{item.description}</td>
-                        <td className="px-6 py-4 text-sm font-bold text-right">{formatCurrency(parseFloat(item.nominal))}</td>
+                        <td className="px-4 py-1.5 text-[11px] font-medium">{new Date(item.date).toLocaleString('id-ID')}</td>
+                        <td className="px-4 py-1.5 text-[11px]">{item.description}</td>
+                        <td className="px-4 py-1.5 text-[11px] font-bold text-right">{formatCurrency(parseFloat(item.nominal))}</td>
                       </>
                     ) : (
                       <>
-                        <td className="px-6 py-4 text-sm font-medium">{item.day_name || item.date || item.month_name}</td>
-                        <td className="px-6 py-4 text-sm font-bold text-right">{formatCurrency(parseFloat(item.total))}</td>
+                        <td className="px-4 py-1.5 text-[11px] font-medium">{item.day_name || item.date || item.month_name}</td>
+                        <td className="px-4 py-1.5 text-[11px] font-bold text-right">{formatCurrency(parseFloat(item.total))}</td>
                       </>
                     )}
                   </tr>
@@ -518,8 +518,8 @@ function PersediaanModule() {
               </div>
               <span className="text-[9px] font-black text-[#ADB5BD] uppercase tracking-widest">In Stock</span>
             </div>
-            <h4 className="text-lg font-bold mb-0.5">{item.name}</h4>
-            <p className="text-xl font-black text-[#1A1A1A]">{formatNumber(item.total_stock || 0)} <span className="text-[10px] font-medium text-[#6C757D]">kg</span></p>
+            <h4 className="text-base font-bold mb-0.5">{item.name}</h4>
+            <p className="text-lg font-black text-[#1A1A1A]">{formatNumber(item.total_stock || 0)} <span className="text-[9px] font-medium text-[#6C757D]">kg</span></p>
           </div>
         ))}
       </div>
@@ -528,31 +528,31 @@ function PersediaanModule() {
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white p-10 rounded-3xl shadow-xl border border-[#E9ECEF]"
+          className="bg-white p-6 rounded-2xl shadow-xl border border-[#E9ECEF]"
         >
-          <div className="flex justify-between items-center mb-8">
-            <h3 className="text-2xl font-bold">Arus Stok: {selectedFruit}</h3>
-            <button onClick={() => setSelectedFruit(null)} className="text-[#ADB5BD] hover:text-[#1A1A1A]"><X size={24} /></button>
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-lg font-bold">Arus Stok: {selectedFruit}</h3>
+            <button onClick={() => setSelectedFruit(null)} className="text-[#ADB5BD] hover:text-[#1A1A1A]"><X size={20} /></button>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="border-b-2 border-[#F8F9FA]">
-                  <th className="py-4 text-xs font-black uppercase tracking-widest text-[#ADB5BD]">Tanggal</th>
-                  <th className="py-4 text-xs font-black uppercase tracking-widest text-[#ADB5BD]">Keterangan</th>
-                  <th className="py-4 text-xs font-black uppercase tracking-widest text-[#ADB5BD] text-right">Masuk (Beli)</th>
-                  <th className="py-4 text-xs font-black uppercase tracking-widest text-[#ADB5BD] text-right">Keluar (Jual)</th>
-                  <th className="py-4 text-xs font-black uppercase tracking-widest text-[#ADB5BD] text-right">Sisa</th>
+                  <th className="py-2 text-[9px] font-black uppercase tracking-widest text-[#ADB5BD]">Tanggal</th>
+                  <th className="py-2 text-[9px] font-black uppercase tracking-widest text-[#ADB5BD]">Keterangan</th>
+                  <th className="py-2 text-[9px] font-black uppercase tracking-widest text-[#ADB5BD] text-right">Masuk</th>
+                  <th className="py-2 text-[9px] font-black uppercase tracking-widest text-[#ADB5BD] text-right">Keluar</th>
+                  <th className="py-2 text-[9px] font-black uppercase tracking-widest text-[#ADB5BD] text-right">Sisa</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#F8F9FA]">
                 {flow.map((f, idx) => (
                   <tr key={idx} className="hover:bg-[#F8F9FA] transition-all">
-                    <td className="py-4 text-sm">{format(new Date(f.date), "dd/MM/yyyy HH:mm")}</td>
-                    <td className="py-4 text-sm font-medium">{f.keterangan}</td>
-                    <td className="py-4 text-sm text-right font-bold text-green-600">{f.masuk > 0 ? `+${formatNumber(f.masuk)} kg` : "-"}</td>
-                    <td className="py-4 text-sm text-right font-bold text-red-600">{f.keluar > 0 ? `-${formatNumber(f.keluar)} kg` : "-"}</td>
-                    <td className="py-4 text-sm text-right font-black">{formatNumber(f.sisa)} kg</td>
+                    <td className="py-1.5 text-[11px]">{format(new Date(f.date), "dd/MM/yy HH:mm")}</td>
+                    <td className="py-1.5 text-[11px] font-medium">{f.keterangan}</td>
+                    <td className="py-1.5 text-[11px] text-right font-bold text-green-600">{f.masuk > 0 ? `+${formatNumber(f.masuk)}` : "-"}</td>
+                    <td className="py-1.5 text-[11px] text-right font-bold text-red-600">{f.keluar > 0 ? `-${formatNumber(f.keluar)}` : "-"}</td>
+                    <td className="py-1.5 text-[11px] text-right font-black">{formatNumber(f.sisa)} kg</td>
                   </tr>
                 ))}
                 {flow.length === 0 && (
@@ -622,13 +622,13 @@ function PengaturanModule({ fruits, onUpdate }: { fruits: Fruit[], onUpdate: () 
         </form>
       </div>
 
-      <div className="bg-white p-10 rounded-3xl shadow-xl border border-[#E9ECEF]">
-        <h3 className="text-2xl font-bold mb-8">Daftar Buah & Harga</h3>
-        <div className="space-y-4 max-h-[400px] overflow-y-auto pr-4">
+      <div className="bg-white p-6 rounded-2xl shadow-lg border border-[#E9ECEF]">
+        <h3 className="text-lg font-bold mb-6">Daftar Buah & Harga</h3>
+        <div className="space-y-1.5 max-h-[400px] overflow-y-auto pr-2">
           {safeFruits.map(f => (
-            <div key={f.id} className="flex justify-between items-center p-4 bg-[#F8F9FA] rounded-xl">
-              <span className="font-bold">{f.name}</span>
-              <span className="text-[#6C757D] font-medium">{formatCurrency(f.price_per_kg)}/kg</span>
+            <div key={f.id} className="flex justify-between items-center p-1.5 bg-[#F8F9FA] rounded-lg">
+              <span className="font-bold text-[11px]">{f.name}</span>
+              <span className="text-[#6C757D] font-medium text-[11px]">{formatCurrency(f.price_per_kg)}/kg</span>
             </div>
           ))}
         </div>
@@ -639,7 +639,7 @@ function PengaturanModule({ fruits, onUpdate }: { fruits: Fruit[], onUpdate: () 
 
 function BalanceRow({ label, value, isNegative = false }: { label: string, value: number, isNegative?: boolean }) {
   return (
-    <div className="flex justify-between items-center text-xs">
+    <div className="flex justify-between items-center text-[11px]">
       <span className="text-[#495057]">{label}</span>
       <span className={cn("font-medium", isNegative && value !== 0 ? "text-red-500" : "")}>
         {isNegative && value !== 0 ? "(" : ""}{formatCurrency(Math.abs(value))}{isNegative && value !== 0 ? ")" : ""}
@@ -985,56 +985,56 @@ function LaporanModule() {
             {report && (
               <div className="space-y-4">
                 {/* Pendapatan */}
-                <div className="space-y-2">
-                  <h4 className="text-sm font-black uppercase text-[#ADB5BD] border-b pb-1">Pendapatan</h4>
-                  <div className="flex justify-between items-center px-4">
+                <div className="space-y-1.5">
+                  <h4 className="text-[11px] font-black uppercase text-[#ADB5BD] border-b pb-0.5">Pendapatan</h4>
+                  <div className="flex justify-between items-center px-2 text-xs">
                     <span>Penjualan</span>
                     <span className="font-bold">{formatCurrency(report.sales)}</span>
                   </div>
-                  <div className="flex justify-between items-center px-4 bg-[#F8F9FA] py-2 rounded-lg">
+                  <div className="flex justify-between items-center px-2 bg-[#F8F9FA] py-1.5 rounded-lg text-xs">
                     <span className="font-bold">Total Pendapatan</span>
                     <span className="font-black">{formatCurrency(report.sales)}</span>
                   </div>
                 </div>
 
                 {/* HPP */}
-                <div className="space-y-2 pt-4">
-                  <h4 className="text-sm font-black uppercase text-[#ADB5BD] border-b pb-1">Beban Pokok Penjualan</h4>
-                  <div className="flex justify-between items-center px-4 text-sm">
+                <div className="space-y-1.5 pt-2">
+                  <h4 className="text-[11px] font-black uppercase text-[#ADB5BD] border-b pb-0.5">Beban Pokok Penjualan</h4>
+                  <div className="flex justify-between items-center px-2 text-[11px]">
                     <span>Persediaan Awal</span>
                     <span className="font-medium">{formatCurrency(report.beginningInventory)}</span>
                   </div>
-                  <div className="flex justify-between items-center px-4 text-sm">
+                  <div className="flex justify-between items-center px-2 text-[11px]">
                     <span>Pembelian</span>
                     <span className="font-medium underline underline-offset-4 decoration-dotted">{formatCurrency(report.purchases)}</span>
                   </div>
-                  <div className="flex justify-between items-center px-4 text-sm">
+                  <div className="flex justify-between items-center px-2 text-[11px]">
                     <span>Persediaan Akhir</span>
                     <span className="font-medium text-red-500">({formatCurrency(report.endingInventory)})</span>
                   </div>
-                  <div className="flex justify-between items-center px-4 bg-[#F8F9FA] py-2 rounded-lg">
+                  <div className="flex justify-between items-center px-2 bg-[#F8F9FA] py-1.5 rounded-lg text-xs">
                     <span className="font-bold">Total HPP</span>
                     <span className="font-black text-red-500">({formatCurrency(report.hpp)})</span>
                   </div>
                 </div>
 
-                <div className="flex justify-between items-center p-4 bg-[#1A1A1A] text-white rounded-xl">
+                <div className="flex justify-between items-center p-3 bg-[#1A1A1A] text-white rounded-xl text-sm">
                   <span className="font-bold">Laba Kotor</span>
-                  <span className="text-xl font-black">{formatCurrency(report.grossProfit)}</span>
+                  <span className="text-lg font-black">{formatCurrency(report.grossProfit)}</span>
                 </div>
 
                 {/* Biaya */}
-                <div className="space-y-2 pt-4">
-                  <div className="flex justify-between items-center border-b pb-1">
-                    <h4 className="text-sm font-black uppercase text-[#ADB5BD]">Beban Umum dan Administrasi</h4>
+                <div className="space-y-1.5 pt-2">
+                  <div className="flex justify-between items-center border-b pb-0.5">
+                    <h4 className="text-[11px] font-black uppercase text-[#ADB5BD]">Beban Umum dan Administrasi</h4>
                     <button 
                       onClick={() => setShowAddExpense(true)}
                       className="text-[#1A1A1A] hover:scale-110 transition-transform"
                     >
-                      <Plus size={16} />
+                      <Plus size={14} />
                     </button>
                   </div>
-                  <div className="space-y-1 px-4">
+                  <div className="space-y-0.5 px-2">
                     <BalanceRow label="Biaya Gaji" value={report.expenses.biayaGaji || 0} />
                     <BalanceRow label="Biaya ATK" value={report.expenses.biayaATK || 0} />
                     <BalanceRow label="Biaya Konsumsi" value={report.expenses.biayaKonsumsi || 0} />
@@ -1048,16 +1048,16 @@ function LaporanModule() {
                     <BalanceRow label="Biaya Penyusutan" value={report.expenses.biayaPenyusutan || 0} />
                     <BalanceRow label="Biaya Lainnya" value={report.expenses.biayaLainnya || 0} />
                   </div>
-                  <div className="flex justify-between items-center px-4 bg-[#F8F9FA] py-2 rounded-lg">
+                  <div className="flex justify-between items-center px-2 bg-[#F8F9FA] py-1.5 rounded-lg text-xs">
                     <span className="font-bold">Total Beban Operasional</span>
                     <span className="font-black">{formatCurrency(report.expenses.total || 0)}</span>
                   </div>
                 </div>
 
-                <div className="pt-6">
-                  <div className="flex justify-between items-center p-6 bg-green-600 text-white rounded-2xl shadow-lg">
-                    <span className="text-lg font-bold">Laba Bersih</span>
-                    <span className="text-3xl font-black">{formatCurrency(report.netProfit)}</span>
+                <div className="pt-4">
+                  <div className="flex justify-between items-center p-4 bg-green-600 text-white rounded-xl shadow-lg">
+                    <span className="text-base font-bold">Laba Bersih</span>
+                    <span className="text-2xl font-black">{formatCurrency(report.netProfit)}</span>
                   </div>
                 </div>
               </div>
@@ -1074,13 +1074,13 @@ function LaporanModule() {
           {balanceSheet && (
             <div className="grid grid-cols-2 gap-12">
               {/* Kolom Aktiva */}
-              <div className="space-y-8">
-                <h4 className="text-sm font-black uppercase text-[#1A1A1A] border-b-2 border-[#1A1A1A] pb-1">Aktiva (Aset)</h4>
+              <div className="space-y-6">
+                <h4 className="text-[11px] font-black uppercase text-[#1A1A1A] border-b-2 border-[#1A1A1A] pb-0.5">Aktiva (Aset)</h4>
                 
                 {/* Aktiva Lancar */}
-                <div className="space-y-2">
-                  <p className="text-[10px] font-bold text-[#ADB5BD] uppercase tracking-tighter">Aktiva Lancar</p>
-                  <div className="space-y-1 px-2">
+                <div className="space-y-1.5">
+                  <p className="text-[9px] font-bold text-[#ADB5BD] uppercase tracking-tighter">Aktiva Lancar</p>
+                  <div className="space-y-0.5 px-1">
                     <BalanceRow label="1. Kas" value={balanceSheet.aktivaLancar.kas} />
                     <BalanceRow label="2. Bank" value={balanceSheet.aktivaLancar.bank} />
                     <BalanceRow label="3. Piutang Dagang" value={balanceSheet.aktivaLancar.piutangDagang} />
@@ -1089,54 +1089,54 @@ function LaporanModule() {
                     <BalanceRow label="6. Pajak dibayar dimuka" value={balanceSheet.aktivaLancar.pajakDibayarDimuka} />
                     <BalanceRow label="7. Aktiva Lancar Lainnya" value={balanceSheet.aktivaLancar.aktivaLancarLainnya} />
                   </div>
-                  <div className="flex justify-between items-center px-2 pt-1 font-bold text-sm border-t border-dashed border-[#E9ECEF]">
+                  <div className="flex justify-between items-center px-1 pt-1 font-bold text-[11px] border-t border-dashed border-[#E9ECEF]">
                     <span>Total Aktiva Lancar</span>
                     <span>{formatCurrency(balanceSheet.aktivaLancar.total)}</span>
                   </div>
                 </div>
 
                 {/* Aktiva Tetap */}
-                <div className="space-y-2">
-                  <p className="text-[10px] font-bold text-[#ADB5BD] uppercase tracking-tighter">Aktiva Tetap</p>
-                  <div className="space-y-1 px-2">
+                <div className="space-y-1.5">
+                  <p className="text-[9px] font-bold text-[#ADB5BD] uppercase tracking-tighter">Aktiva Tetap</p>
+                  <div className="space-y-0.5 px-1">
                     <BalanceRow label="1. Tanah dan/atau Bangunan" value={balanceSheet.aktivaTetap.tanahBangunan} />
                     <BalanceRow label="2. Kendaraan" value={balanceSheet.aktivaTetap.kendaraan} />
                     <BalanceRow label="3. Inventaris" value={balanceSheet.aktivaTetap.inventaris} />
                     <BalanceRow label="4. Akumulasi Penyusutan" value={balanceSheet.aktivaTetap.akumulasiPenyusutan} isNegative />
                   </div>
-                  <div className="flex justify-between items-center px-2 pt-1 font-bold text-sm border-t border-dashed border-[#E9ECEF]">
+                  <div className="flex justify-between items-center px-1 pt-1 font-bold text-[11px] border-t border-dashed border-[#E9ECEF]">
                     <span>Total Aktiva Tetap</span>
                     <span>{formatCurrency(balanceSheet.aktivaTetap.total)}</span>
                   </div>
                 </div>
 
                 {/* Aktiva Tidak Lancar Lainnya */}
-                <div className="space-y-2">
-                  <p className="text-[10px] font-bold text-[#ADB5BD] uppercase tracking-tighter">Aktiva Tidak Lancar Lainnya</p>
-                  <div className="space-y-1 px-2">
+                <div className="space-y-1.5">
+                  <p className="text-[9px] font-bold text-[#ADB5BD] uppercase tracking-tighter">Aktiva Tidak Lancar Lainnya</p>
+                  <div className="space-y-0.5 px-1">
                     <BalanceRow label="1. Piutang Jangka Panjang" value={balanceSheet.aktivaTidakLancarLainnya.piutangJangkaPanjang} />
                     <BalanceRow label="2. Biaya Ditangguhkan" value={balanceSheet.aktivaTidakLancarLainnya.biayaDitangguhkan} />
                   </div>
-                  <div className="flex justify-between items-center px-2 pt-1 font-bold text-sm border-t border-dashed border-[#E9ECEF]">
+                  <div className="flex justify-between items-center px-1 pt-1 font-bold text-[11px] border-t border-dashed border-[#E9ECEF]">
                     <span>Total Aktiva Tidak Lancar Lainnya</span>
                     <span>{formatCurrency(balanceSheet.aktivaTidakLancarLainnya.total)}</span>
                   </div>
                 </div>
 
-                <div className="flex justify-between items-center p-4 bg-[#1A1A1A] text-white rounded-xl">
-                  <span className="font-bold">TOTAL AKTIVA</span>
-                  <span className="text-xl font-black">{formatCurrency(balanceSheet.totalAktiva)}</span>
+                <div className="flex justify-between items-center p-3 bg-[#1A1A1A] text-white rounded-xl text-xs">
+                  <span className="font-bold text-[10px] uppercase">TOTAL AKTIVA</span>
+                  <span className="text-base font-black">{formatCurrency(balanceSheet.totalAktiva)}</span>
                 </div>
               </div>
 
               {/* Kolom Pasiva */}
-              <div className="space-y-8">
-                <h4 className="text-sm font-black uppercase text-[#1A1A1A] border-b-2 border-[#1A1A1A] pb-1">Pasiva (Kewajiban & Modal)</h4>
+              <div className="space-y-6">
+                <h4 className="text-[11px] font-black uppercase text-[#1A1A1A] border-b-2 border-[#1A1A1A] pb-0.5">Pasiva (Kewajiban & Modal)</h4>
 
                 {/* Pasiva Lancar */}
-                <div className="space-y-2">
-                  <p className="text-[10px] font-bold text-[#ADB5BD] uppercase tracking-tighter">Pasiva Lancar (Jangka Pendek)</p>
-                  <div className="space-y-1 px-2">
+                <div className="space-y-1.5">
+                  <p className="text-[9px] font-bold text-[#ADB5BD] uppercase tracking-tighter">Pasiva Lancar (Jangka Pendek)</p>
+                  <div className="space-y-0.5 px-1">
                     <BalanceRow label="1. Utang Dagang" value={balanceSheet.pasivaLancar.utangDagang} />
                     <BalanceRow label="2. Utang Gaji" value={balanceSheet.pasivaLancar.utangGaji} />
                     <BalanceRow label="3. Utang Sewa" value={balanceSheet.pasivaLancar.utangSewa} />
@@ -1147,42 +1147,42 @@ function LaporanModule() {
                     <BalanceRow label="8. Pendapatan Diterima di Muka" value={balanceSheet.pasivaLancar.pendapatanDiterimaDimuka} />
                     <BalanceRow label="9. Utang Lancar Lainnya" value={balanceSheet.pasivaLancar.utangLancarLainnya} />
                   </div>
-                  <div className="flex justify-between items-center px-2 pt-1 font-bold text-sm border-t border-dashed border-[#E9ECEF]">
+                  <div className="flex justify-between items-center px-1 pt-1 font-bold text-[11px] border-t border-dashed border-[#E9ECEF]">
                     <span>Total Pasiva Lancar</span>
                     <span>{formatCurrency(balanceSheet.pasivaLancar.total)}</span>
                   </div>
                 </div>
 
                 {/* Pasiva Jangka Panjang */}
-                <div className="space-y-2">
-                  <p className="text-[10px] font-bold text-[#ADB5BD] uppercase tracking-tighter">Pasiva Jangka Panjang</p>
-                  <div className="space-y-1 px-2">
+                <div className="space-y-1.5">
+                  <p className="text-[9px] font-bold text-[#ADB5BD] uppercase tracking-tighter">Pasiva Jangka Panjang</p>
+                  <div className="space-y-0.5 px-1">
                     <BalanceRow label="1. Utang Bank/Kredit Investasi" value={balanceSheet.pasivaJangkaPanjang.utangBank} />
                     <BalanceRow label="2. Utang jangka panjang lainnya" value={balanceSheet.pasivaJangkaPanjang.utangJangkaPanjangLainnya} />
                   </div>
-                  <div className="flex justify-between items-center px-2 pt-1 font-bold text-sm border-t border-dashed border-[#E9ECEF]">
+                  <div className="flex justify-between items-center px-1 pt-1 font-bold text-[11px] border-t border-dashed border-[#E9ECEF]">
                     <span>Total Pasiva Jangka Panjang</span>
                     <span>{formatCurrency(balanceSheet.pasivaJangkaPanjang.total)}</span>
                   </div>
                 </div>
 
                 {/* Ekuitas */}
-                <div className="space-y-2">
-                  <p className="text-[10px] font-bold text-[#ADB5BD] uppercase tracking-tighter">Ekuitas</p>
-                  <div className="space-y-1 px-2">
+                <div className="space-y-1.5">
+                  <p className="text-[9px] font-bold text-[#ADB5BD] uppercase tracking-tighter">Ekuitas</p>
+                  <div className="space-y-0.5 px-1">
                     <BalanceRow label="1. Modal" value={balanceSheet.ekuitas.modal} />
                     <BalanceRow label="2. Laba Ditahan" value={balanceSheet.ekuitas.labaDitahan} />
                     <BalanceRow label="3. Laba Tahun Berjalan" value={balanceSheet.ekuitas.labaTahunBerjalan} />
                   </div>
-                  <div className="flex justify-between items-center px-2 pt-1 font-bold text-sm border-t border-dashed border-[#E9ECEF]">
+                  <div className="flex justify-between items-center px-1 pt-1 font-bold text-[11px] border-t border-dashed border-[#E9ECEF]">
                     <span>Total Ekuitas</span>
                     <span>{formatCurrency(balanceSheet.ekuitas.total)}</span>
                   </div>
                 </div>
 
-                <div className="flex justify-between items-center p-4 bg-[#1A1A1A] text-white rounded-xl">
-                  <span className="font-bold">TOTAL PASIVA</span>
-                  <span className="text-xl font-black">{formatCurrency(balanceSheet.totalPasiva)}</span>
+                <div className="flex justify-between items-center p-3 bg-[#1A1A1A] text-white rounded-xl text-xs">
+                  <span className="font-bold text-[10px] uppercase">TOTAL PASIVA</span>
+                  <span className="text-base font-black">{formatCurrency(balanceSheet.totalPasiva)}</span>
                 </div>
               </div>
             </div>
