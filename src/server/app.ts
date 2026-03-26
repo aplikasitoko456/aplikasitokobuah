@@ -352,18 +352,14 @@ app.post("/api/sales", async (req, res) => {
         [`Penjualan buah ${fruitName} ${formattedQty} kg`, 'Penjualan', total_price, transaction_id]
       );
 
+      // Debit Persediaan Akhir (Laba Rugi) pada Kredit Persediaan Barang (Neraca)
       await client.query(
         "INSERT INTO journal_entries (description, account_name, debit, transaction_id) VALUES ($1, $2, $3, $4)",
-        [`HPP Penjualan ${fruitName}`, 'HPP', totalHPP, transaction_id]
+        [`Penyesuaian persediaan akhir (penjualan) ${fruitName}`, 'Persediaan Akhir', totalHPP, transaction_id]
       );
       await client.query(
         "INSERT INTO journal_entries (description, account_name, credit, transaction_id) VALUES ($1, $2, $3, $4)",
-        [`Pengurangan persediaan ${fruitName}`, 'Persediaan Barang', totalHPP, transaction_id]
-      );
-      // Kurangi Persediaan Akhir (Debit) agar saldo Persediaan Akhir di P&L tetap sinkron dengan stok fisik
-      await client.query(
-        "INSERT INTO journal_entries (description, account_name, debit, transaction_id) VALUES ($1, $2, $3, $4)",
-        [`Pengurangan persediaan akhir ${fruitName}`, 'Persediaan Akhir', totalHPP, transaction_id]
+        [`Pengurangan persediaan barang ${fruitName}`, 'Persediaan Barang', totalHPP, transaction_id]
       );
     }
 
@@ -814,10 +810,38 @@ app.get("/api/reports/balance-sheet", async (req, res) => {
     };
     pasivaJangkaPanjang.total = pasivaJangkaPanjang.utangBank + pasivaJangkaPanjang.utangJangkaPanjangLainnya;
 
+    // Hitung Laba Bersih untuk disinkronkan ke Neraca
+    const salesRes = await pool.query("SELECT COALESCE(SUM(credit) - SUM(debit), 0) as total FROM journal_entries WHERE account_name = 'Penjualan'");
+    const sales = parseFloat(salesRes.rows[0].total);
+
+    const beginningInventoryRes = await pool.query("SELECT COALESCE(SUM(debit) - SUM(credit), 0) as total FROM journal_entries WHERE account_name = 'Persediaan Awal'");
+    const beginningInventory = parseFloat(beginningInventoryRes.rows[0].total);
+
+    const purchasesRes = await pool.query("SELECT COALESCE(SUM(debit) - SUM(credit), 0) as total FROM journal_entries WHERE account_name = 'Pembelian'");
+    const purchases = parseFloat(purchasesRes.rows[0].total);
+
+    const endingInventoryRes = await pool.query("SELECT COALESCE(SUM(credit) - SUM(debit), 0) as total FROM journal_entries WHERE account_name = 'Persediaan Akhir'");
+    const endingInventory = parseFloat(endingInventoryRes.rows[0].total);
+
+    const hpp = beginningInventory + purchases - endingInventory;
+    const grossProfit = sales - hpp;
+
+    const expenseCategories = [
+      'Biaya Gaji', 'Biaya ATK', 'Biaya Konsumsi', 'Biaya BPJS', 'Biaya Sewa',
+      'Biaya Jasa', 'Biaya Listrik, air dan kebersihan', 'Biaya Pajak',
+      'Biaya Perijinan', 'Biaya Asuransi', 'Biaya Penyusutan', 'Biaya Lainnya'
+    ];
+    let totalExpenses = 0;
+    for (const cat of expenseCategories) {
+      const res = await pool.query("SELECT COALESCE(SUM(debit) - SUM(credit), 0) as total FROM journal_entries WHERE account_name = $1", [cat]);
+      totalExpenses += parseFloat(res.rows[0].total);
+    }
+    const netProfit = grossProfit - totalExpenses;
+
     const ekuitas = {
       modal: Math.abs(await getBalance('Modal')),
       labaDitahan: Math.abs(await getBalance('Laba Ditahan')),
-      labaTahunBerjalan: Math.abs(await getBalance('Laba Tahun Berjalan')),
+      labaTahunBerjalan: netProfit,
       total: 0
     };
     ekuitas.total = ekuitas.modal + ekuitas.labaDitahan + ekuitas.labaTahunBerjalan;
