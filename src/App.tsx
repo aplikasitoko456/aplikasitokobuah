@@ -55,8 +55,8 @@ export default function App() {
 
   return (
     <div className="flex flex-col h-screen bg-[#F8F9FA] text-[#1A1A1A] font-sans overflow-hidden">
-      {/* Header with Fruit Background */}
-      <header className="relative h-48 w-full overflow-hidden flex items-end p-12">
+      {/* Header with Fruit Background - More Compact */}
+      <header className="relative h-28 w-full overflow-hidden flex items-end p-6">
         <div className="absolute inset-0 z-0">
           <img 
             src="https://images.unsplash.com/photo-1610832958506-aa56368176cf?q=80&w=2070&auto=format&fit=crop" 
@@ -66,19 +66,19 @@ export default function App() {
           />
         </div>
         <div className="relative z-10 text-white">
-          <div className="flex items-center gap-3 mb-2">
-            <Store size={24} className="text-yellow-400" />
-            <h2 className="text-4xl font-black tracking-tight uppercase">Toko Buah Sumber</h2>
+          <div className="flex items-center gap-2 mb-1">
+            <Store size={20} className="text-yellow-400" />
+            <h2 className="text-2xl font-black tracking-tight uppercase">Toko Buah Sumber</h2>
           </div>
           <div className="flex items-center gap-2 opacity-80">
-            <MapPin size={16} />
-            <p className="text-sm font-medium italic">Jalan Andi Toro, Kabupaten Gowa</p>
+            <MapPin size={12} />
+            <p className="text-xs font-medium italic">Jalan Andi Toro, Kabupaten Gowa</p>
           </div>
         </div>
       </header>
 
-      {/* Main Content Area */}
-      <main className="flex-1 p-12 pb-32 overflow-y-auto">
+      {/* Main Content Area - Reduced Padding */}
+      <main className="flex-1 p-6 pb-24 overflow-y-auto">
         <AnimatePresence mode="wait">
           <motion.div
             key={activeMenu}
@@ -252,8 +252,8 @@ function KasirModule({ fruits }: { fruits: Fruit[] }) {
         </button>
       </div>
 
-      <form onSubmit={handleSubmit} className="bg-white p-10 rounded-3xl shadow-2xl border border-[#E9ECEF]">
-        <div className="space-y-4 mb-8">
+      <form onSubmit={handleSubmit} className="bg-white p-6 rounded-2xl shadow-xl border border-[#E9ECEF]">
+        <div className="space-y-3 mb-6">
           <div className="grid grid-cols-[2fr_1fr_1.5fr_40px] gap-4 px-2">
             <label className="text-[10px] font-black uppercase tracking-widest text-[#ADB5BD]">Pilih Buah</label>
             <label className="text-[10px] font-black uppercase tracking-widest text-[#ADB5BD]">Berat (kg)</label>
@@ -402,10 +402,10 @@ function KinerjaModule() {
 
       <div 
         onClick={() => setShowDetails(!showDetails)}
-        className="bg-white p-12 rounded-3xl shadow-2xl border border-[#E9ECEF] flex flex-col items-center justify-center text-center cursor-pointer hover:border-[#1A1A1A] transition-all group"
+        className="bg-white p-8 rounded-2xl shadow-xl border border-[#E9ECEF] flex flex-col items-center justify-center text-center cursor-pointer hover:border-[#1A1A1A] transition-all group"
       >
-        <p className="text-[#ADB5BD] font-bold uppercase tracking-[0.2em] mb-4 group-hover:text-[#1A1A1A] transition-colors">Total Penjualan</p>
-        <h3 className="text-7xl font-black tracking-tighter mb-4">
+        <p className="text-[#ADB5BD] font-bold uppercase tracking-[0.2em] mb-2 group-hover:text-[#1A1A1A] transition-colors">Total Penjualan</p>
+        <h3 className="text-5xl font-black tracking-tighter mb-2">
           {formatCurrency(parseFloat(data.total_sales || "0"))}
         </h3>
         <div className="h-1 w-24 bg-[#1A1A1A] rounded-full"></div>
@@ -499,27 +499,27 @@ function PersediaanModule() {
 
   return (
     <div className="max-w-5xl">
-      <div className="grid grid-cols-3 gap-8 mb-8">
+      <div className="grid grid-cols-3 gap-6 mb-6">
         {inventory.map((item, idx) => (
           <div 
             key={idx} 
             onClick={() => setSelectedFruit(item.name)}
             className={cn(
-              "bg-white p-8 rounded-3xl shadow-xl border transition-all group cursor-pointer",
+              "bg-white p-6 rounded-2xl shadow-lg border transition-all group cursor-pointer",
               selectedFruit === item.name ? "border-[#1A1A1A] ring-2 ring-[#1A1A1A]/10" : "border-[#E9ECEF] hover:border-[#1A1A1A]"
             )}
           >
-            <div className="flex justify-between items-start mb-6">
+            <div className="flex justify-between items-start mb-4">
               <div className={cn(
-                "p-3 rounded-2xl transition-all",
+                "p-2 rounded-xl transition-all",
                 selectedFruit === item.name ? "bg-[#1A1A1A] text-white" : "bg-[#F8F9FA] group-hover:bg-[#1A1A1A] group-hover:text-white"
               )}>
-                <Package size={24} />
+                <Package size={20} />
               </div>
-              <span className="text-xs font-black text-[#ADB5BD] uppercase tracking-widest">In Stock</span>
+              <span className="text-[10px] font-black text-[#ADB5BD] uppercase tracking-widest">In Stock</span>
             </div>
-            <h4 className="text-2xl font-bold mb-1">{item.name}</h4>
-            <p className="text-4xl font-black text-[#1A1A1A]">{formatNumber(item.total_stock || 0)} <span className="text-sm font-medium text-[#6C757D]">kg</span></p>
+            <h4 className="text-xl font-bold mb-1">{item.name}</h4>
+            <p className="text-2xl font-black text-[#1A1A1A]">{formatNumber(item.total_stock || 0)} <span className="text-xs font-medium text-[#6C757D]">kg</span></p>
           </div>
         ))}
       </div>
@@ -588,9 +588,9 @@ function PengaturanModule({ fruits, onUpdate }: { fruits: Fruit[], onUpdate: () 
   };
 
   return (
-    <div className="grid grid-cols-2 gap-12 max-w-6xl">
-      <div className="bg-white p-10 rounded-3xl shadow-xl border border-[#E9ECEF]">
-        <h3 className="text-2xl font-bold mb-8 flex items-center gap-3">
+    <div className="grid grid-cols-2 gap-8 max-w-6xl">
+      <div className="bg-white p-6 rounded-2xl shadow-lg border border-[#E9ECEF]">
+        <h3 className="text-xl font-bold mb-6 flex items-center gap-3">
           <Plus className="text-[#1A1A1A]" />
           Tambah Buah Baru
         </h3>
@@ -921,9 +921,9 @@ function LaporanModule() {
       </div>
 
       {tab === "jurnal" ? (
-        <div className="bg-white p-10 rounded-3xl shadow-xl border border-[#E9ECEF]">
-          <div className="flex justify-between items-center mb-8">
-            <h3 className="text-2xl font-bold">Jurnal Umum</h3>
+        <div className="bg-white p-6 rounded-2xl shadow-lg border border-[#E9ECEF]">
+          <div className="flex justify-between items-center mb-6">
+            <h3 className="text-xl font-bold">Jurnal Umum</h3>
             <button 
               onClick={() => setShowAddJournal(true)}
               className="px-6 py-2 bg-[#1A1A1A] text-white rounded-xl font-bold flex items-center gap-2 hover:bg-black transition-all"
@@ -975,10 +975,10 @@ function LaporanModule() {
           </div>
         </div>
       ) : tab === "rugilaba" ? (
-        <div className="flex flex-col gap-8">
-          <div className="bg-white p-10 rounded-3xl shadow-xl border border-[#E9ECEF] max-w-3xl mx-auto w-full">
-            <div className="text-center mb-10">
-              <h3 className="text-2xl font-bold uppercase tracking-widest">Laporan Rugi Laba</h3>
+        <div className="flex flex-col gap-6">
+          <div className="bg-white p-8 rounded-2xl shadow-lg border border-[#E9ECEF] max-w-3xl mx-auto w-full">
+            <div className="text-center mb-6">
+              <h3 className="text-xl font-bold uppercase tracking-widest">Laporan Rugi Laba</h3>
               <p className="text-[#ADB5BD] text-sm">Periode Berjalan</p>
             </div>
             
@@ -1065,9 +1065,9 @@ function LaporanModule() {
           </div>
         </div>
       ) : tab === "neraca" ? (
-        <div className="bg-white p-10 rounded-3xl shadow-xl border border-[#E9ECEF] max-w-4xl mx-auto w-full">
-          <div className="text-center mb-10">
-            <h3 className="text-2xl font-bold uppercase tracking-widest">Neraca</h3>
+        <div className="bg-white p-8 rounded-2xl shadow-lg border border-[#E9ECEF] max-w-4xl mx-auto w-full">
+          <div className="text-center mb-6">
+            <h3 className="text-xl font-bold uppercase tracking-widest">Neraca</h3>
             <p className="text-[#ADB5BD] text-sm">Posisi Keuangan</p>
           </div>
 
