@@ -717,19 +717,28 @@ app.get("/api/reports/profit-loss", async (req, res) => {
       'Biaya Perijinan', 'Biaya Asuransi', 'Biaya Penyusutan', 'Biaya Lainnya'
     ];
     
+    const expenseMapping: Record<string, string> = {
+      'Biaya Gaji': 'biayaGaji',
+      'Biaya ATK': 'biayaATK',
+      'Biaya Konsumsi': 'biayaKonsumsi',
+      'Biaya BPJS': 'biayaBPJS',
+      'Biaya Sewa': 'biayaSewa',
+      'Biaya Jasa': 'biayaJasa',
+      'Biaya Listrik, air dan kebersihan': 'biayaListrikAirKebersihan',
+      'Biaya Pajak': 'biayaPajak',
+      'Biaya Perijinan': 'biayaPerijinan',
+      'Biaya Asuransi': 'biayaAsuransi',
+      'Biaya Penyusutan': 'biayaPenyusutan',
+      'Biaya Lainnya': 'biayaLainnya'
+    };
+    
     const expenses: any = {};
     let totalExpenses = 0;
 
-    for (const cat of expenseCategories) {
+    for (const cat of Object.keys(expenseMapping)) {
       const res = await pool.query("SELECT COALESCE(SUM(debit) - SUM(credit), 0) as total FROM journal_entries WHERE account_name = $1", [cat]);
       const val = parseFloat(res.rows[0].total);
-      const key = cat.toLowerCase().replace(/, /g, '').replace(/ /g, '');
-      const finalKey = key.startsWith('biaya') ? key : 'biaya' + key.charAt(0).toUpperCase() + key.slice(1);
-      
-      let mappedKey = finalKey;
-      if (cat === 'Biaya Listrik, air dan kebersihan') mappedKey = 'biayaListrikAirKebersihan';
-      
-      expenses[mappedKey] = val;
+      expenses[expenseMapping[cat]] = val;
       totalExpenses += val;
     }
     expenses.total = totalExpenses;

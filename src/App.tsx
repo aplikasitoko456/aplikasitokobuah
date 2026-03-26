@@ -1035,22 +1035,22 @@ function LaporanModule() {
                     </button>
                   </div>
                   <div className="space-y-1 px-4">
-                    <BalanceRow label="Biaya Gaji" value={report.expenses.biayaGaji} isNegative />
-                    <BalanceRow label="Biaya ATK" value={report.expenses.biayaATK} isNegative />
-                    <BalanceRow label="Biaya Konsumsi" value={report.expenses.biayaKonsumsi} isNegative />
-                    <BalanceRow label="Biaya BPJS" value={report.expenses.biayaBPJS} isNegative />
-                    <BalanceRow label="Biaya Sewa" value={report.expenses.biayaSewa} isNegative />
-                    <BalanceRow label="Biaya Jasa" value={report.expenses.biayaJasa} isNegative />
-                    <BalanceRow label="Biaya Listrik, air dan kebersihan" value={report.expenses.biayaListrikAirKebersihan} isNegative />
-                    <BalanceRow label="Biaya Pajak" value={report.expenses.biayaPajak} isNegative />
-                    <BalanceRow label="Biaya Perijinan" value={report.expenses.biayaPerijinan} isNegative />
-                    <BalanceRow label="Biaya Asuransi" value={report.expenses.biayaAsuransi} isNegative />
-                    <BalanceRow label="Biaya Penyusutan" value={report.expenses.biayaPenyusutan} isNegative />
-                    <BalanceRow label="Biaya Lainnya" value={report.expenses.biayaLainnya} isNegative />
+                    <BalanceRow label="Biaya Gaji" value={report.expenses.biayaGaji || 0} />
+                    <BalanceRow label="Biaya ATK" value={report.expenses.biayaATK || 0} />
+                    <BalanceRow label="Biaya Konsumsi" value={report.expenses.biayaKonsumsi || 0} />
+                    <BalanceRow label="Biaya BPJS" value={report.expenses.biayaBPJS || 0} />
+                    <BalanceRow label="Biaya Sewa" value={report.expenses.biayaSewa || 0} />
+                    <BalanceRow label="Biaya Jasa" value={report.expenses.biayaJasa || 0} />
+                    <BalanceRow label="Biaya Listrik, air dan kebersihan" value={report.expenses.biayaListrikAirKebersihan || 0} />
+                    <BalanceRow label="Biaya Pajak" value={report.expenses.biayaPajak || 0} />
+                    <BalanceRow label="Biaya Perijinan" value={report.expenses.biayaPerijinan || 0} />
+                    <BalanceRow label="Biaya Asuransi" value={report.expenses.biayaAsuransi || 0} />
+                    <BalanceRow label="Biaya Penyusutan" value={report.expenses.biayaPenyusutan || 0} />
+                    <BalanceRow label="Biaya Lainnya" value={report.expenses.biayaLainnya || 0} />
                   </div>
                   <div className="flex justify-between items-center px-4 bg-[#F8F9FA] py-2 rounded-lg">
                     <span className="font-bold">Total Beban Operasional</span>
-                    <span className="font-black text-red-500">({formatCurrency(report.expenses.total)})</span>
+                    <span className="font-black">{formatCurrency(report.expenses.total || 0)}</span>
                   </div>
                 </div>
 
