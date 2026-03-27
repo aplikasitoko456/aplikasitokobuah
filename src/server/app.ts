@@ -4,6 +4,9 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
+// Set Node.js process timezone to GMT+8
+process.env.TZ = "Asia/Makassar";
+
 const { Pool } = pg;
 
 const pool = new Pool({
@@ -12,6 +15,11 @@ const pool = new Pool({
     rejectUnauthorized: false,
   },
   connectionTimeoutMillis: 5000, // Beri batas waktu 5 detik
+});
+
+// Set timezone to GMT+8 (Asia/Makassar) for all new connections
+pool.on('connect', (client) => {
+  client.query("SET TIME ZONE 'Asia/Makassar'");
 });
 
 const app = express();
@@ -29,6 +37,12 @@ const initDb = async () => {
     await pool.query("ALTER TABLE transactions ALTER COLUMN payment_method DROP NOT NULL");
     await pool.query("ALTER TABLE journal_entries ADD COLUMN IF NOT EXISTS transaction_id INTEGER REFERENCES transactions(id)");
 
+    // Migrate to TIMESTAMP (without time zone) for local time storage
+    await pool.query("ALTER TABLE inventory_batches ALTER COLUMN created_at TYPE TIMESTAMP");
+    await pool.query("ALTER TABLE transactions ALTER COLUMN date TYPE TIMESTAMP");
+    await pool.query("ALTER TABLE journal_entries ALTER COLUMN date TYPE TIMESTAMP");
+    await pool.query("ALTER TABLE expenses ALTER COLUMN date TYPE TIMESTAMP");
+
     await pool.query(`
       CREATE TABLE IF NOT EXISTS fruits (
         id SERIAL PRIMARY KEY,
@@ -42,13 +56,13 @@ const initDb = async () => {
         quantity DECIMAL(12, 2) NOT NULL,
         buy_price_per_kg DECIMAL(12, 2) NOT NULL,
         remaining_quantity DECIMAL(12, 2) NOT NULL,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        created_at TIMESTAMP DEFAULT timezone('Asia/Makassar', now())
       );
 
       CREATE TABLE IF NOT EXISTS transactions (
         id SERIAL PRIMARY KEY,
         type TEXT NOT NULL, -- 'sale', 'purchase', 'manual'
-        date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        date TIMESTAMP DEFAULT timezone('Asia/Makassar', now()),
         total_amount DECIMAL(12, 2) NOT NULL,
         payment_method TEXT, -- 'cash', 'bank', 'debt', 'receivable'
         description TEXT
@@ -65,7 +79,7 @@ const initDb = async () => {
 
       CREATE TABLE IF NOT EXISTS journal_entries (
         id SERIAL PRIMARY KEY,
-        date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        date TIMESTAMP DEFAULT timezone('Asia/Makassar', now()),
         description TEXT NOT NULL,
         account_name TEXT NOT NULL,
         debit DECIMAL(12, 2) DEFAULT 0,
@@ -130,7 +144,7 @@ const initDb = async () => {
 
       CREATE TABLE IF NOT EXISTS expenses (
         id SERIAL PRIMARY KEY,
-        date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        date TIMESTAMP DEFAULT timezone('Asia/Makassar', now()),
         category TEXT NOT NULL, -- 'gaji', 'transport', 'penyusutan', 'sewa', 'lainnya'
         amount DECIMAL(12, 2) NOT NULL,
         description TEXT
@@ -239,7 +253,7 @@ app.post("/api/purchases", async (req, res) => {
     const grandTotal = items.reduce((sum: number, item: any) => sum + item.total_price, 0);
 
     const transResult = await client.query(
-      "INSERT INTO transactions (type, total_amount, payment_method) VALUES ('purchase', $1, $2) RETURNING id",
+      "INSERT INTO transactions (type, total_amount, payment_method, date) VALUES ('purchase', $1, $2, timezone('Asia/Makassar', now())) RETURNING id",
       [grandTotal, payment_method]
     );
     const transaction_id = transResult.rows[0].id;
@@ -257,31 +271,31 @@ app.post("/api/purchases", async (req, res) => {
       );
 
       await client.query(
-        "INSERT INTO inventory_batches (fruit_id, quantity, buy_price_per_kg, remaining_quantity) VALUES ($1, $2, $3, $4)",
+        "INSERT INTO inventory_batches (fruit_id, quantity, buy_price_per_kg, remaining_quantity, created_at) VALUES ($1, $2, $3, $4, timezone('Asia/Makassar', now()))",
         [fruit_id, quantity, buy_price_per_kg, quantity]
       );
 
       const formattedQty = quantity.toString().replace('.', ',');
       // Jurnal Pembelian (Laba Rugi)
       await client.query(
-        "INSERT INTO journal_entries (description, account_name, debit, transaction_id) VALUES ($1, $2, $3, $4)",
+        "INSERT INTO journal_entries (description, account_name, debit, transaction_id, date) VALUES ($1, $2, $3, $4, timezone('Asia/Makassar', now()))",
         [`Pembelian buah ${fruitName} ${formattedQty} kg`, 'Pembelian', total_price, transaction_id]
       );
 
       // Jurnal Persediaan (Neraca vs Persediaan Akhir di HPP)
       await client.query(
-        "INSERT INTO journal_entries (description, account_name, debit, transaction_id) VALUES ($1, $2, $3, $4)",
+        "INSERT INTO journal_entries (description, account_name, debit, transaction_id, date) VALUES ($1, $2, $3, $4, timezone('Asia/Makassar', now()))",
         [`Pencatatan persediaan ${fruitName}`, 'Persediaan Barang', total_price, transaction_id]
       );
       await client.query(
-        "INSERT INTO journal_entries (description, account_name, credit, transaction_id) VALUES ($1, $2, $3, $4)",
+        "INSERT INTO journal_entries (description, account_name, credit, transaction_id, date) VALUES ($1, $2, $3, $4, timezone('Asia/Makassar', now()))",
         [`Penyesuaian persediaan akhir ${fruitName}`, 'Persediaan Akhir', total_price, transaction_id]
       );
     }
 
     const creditAccount = payment_method === 'cash' ? 'Kas' : payment_method === 'bank' ? 'Bank' : 'Hutang Dagang';
     await client.query(
-      "INSERT INTO journal_entries (description, account_name, credit, transaction_id) VALUES ($1, $2, $3, $4)",
+      "INSERT INTO journal_entries (description, account_name, credit, transaction_id, date) VALUES ($1, $2, $3, $4, timezone('Asia/Makassar', now()))",
       [`Pembayaran pembelian via ${payment_method}`, creditAccount, grandTotal, transaction_id]
     );
 
@@ -304,7 +318,7 @@ app.post("/api/sales", async (req, res) => {
     const grandTotal = items.reduce((sum: number, item: any) => sum + item.total_price, 0);
 
     const transResult = await client.query(
-      "INSERT INTO transactions (type, total_amount, payment_method) VALUES ('sale', $1, $2) RETURNING id",
+      "INSERT INTO transactions (type, total_amount, payment_method, date) VALUES ('sale', $1, $2, timezone('Asia/Makassar', now())) RETURNING id",
       [grandTotal, payment_method]
     );
     const transaction_id = transResult.rows[0].id;
@@ -348,24 +362,24 @@ app.post("/api/sales", async (req, res) => {
       const formattedQty = quantity.toString().replace('.', ',');
       
       await client.query(
-        "INSERT INTO journal_entries (description, account_name, credit, transaction_id) VALUES ($1, $2, $3, $4)",
+        "INSERT INTO journal_entries (description, account_name, credit, transaction_id, date) VALUES ($1, $2, $3, $4, timezone('Asia/Makassar', now()))",
         [`Penjualan buah ${fruitName} ${formattedQty} kg`, 'Penjualan', total_price, transaction_id]
       );
 
       // Debit Persediaan Akhir (Laba Rugi) pada Kredit Persediaan Barang (Neraca)
       await client.query(
-        "INSERT INTO journal_entries (description, account_name, debit, transaction_id) VALUES ($1, $2, $3, $4)",
+        "INSERT INTO journal_entries (description, account_name, debit, transaction_id, date) VALUES ($1, $2, $3, $4, timezone('Asia/Makassar', now()))",
         [`Penyesuaian persediaan akhir (penjualan) ${fruitName}`, 'Persediaan Akhir', totalHPP, transaction_id]
       );
       await client.query(
-        "INSERT INTO journal_entries (description, account_name, credit, transaction_id) VALUES ($1, $2, $3, $4)",
+        "INSERT INTO journal_entries (description, account_name, credit, transaction_id, date) VALUES ($1, $2, $3, $4, timezone('Asia/Makassar', now()))",
         [`Pengurangan persediaan barang ${fruitName}`, 'Persediaan Barang', totalHPP, transaction_id]
       );
     }
 
     const debitAccount = payment_method === 'cash' ? 'Kas' : payment_method === 'bank' ? 'Bank' : 'Piutang Dagang';
     await client.query(
-      "INSERT INTO journal_entries (description, account_name, debit, transaction_id) VALUES ($1, $2, $3, $4)",
+      "INSERT INTO journal_entries (description, account_name, debit, transaction_id, date) VALUES ($1, $2, $3, $4, timezone('Asia/Makassar', now()))",
       [`Penerimaan penjualan via ${payment_method}`, debitAccount, grandTotal, transaction_id]
     );
 
@@ -573,17 +587,17 @@ app.post("/api/journals", async (req, res) => {
     await client.query("BEGIN");
     
     const transResult = await client.query(
-      "INSERT INTO transactions (type, total_amount, description) VALUES ('manual', $1, $2) RETURNING id",
+      "INSERT INTO transactions (type, total_amount, description, date) VALUES ('manual', $1, $2, timezone('Asia/Makassar', now())) RETURNING id",
       [amount, description]
     );
     const transaction_id = transResult.rows[0].id;
 
     await client.query(
-      "INSERT INTO journal_entries (description, account_name, debit, transaction_id) VALUES ($1, $2, $3, $4)",
+      "INSERT INTO journal_entries (description, account_name, debit, transaction_id, date) VALUES ($1, $2, $3, $4, timezone('Asia/Makassar', now()))",
       [description, debit_account, amount, transaction_id]
     );
     await client.query(
-      "INSERT INTO journal_entries (description, account_name, credit, transaction_id) VALUES ($1, $2, $3, $4)",
+      "INSERT INTO journal_entries (description, account_name, credit, transaction_id, date) VALUES ($1, $2, $3, $4, timezone('Asia/Makassar', now()))",
       [description, credit_account, amount, transaction_id]
     );
 
@@ -663,22 +677,22 @@ app.post("/api/expenses", async (req, res) => {
     await client.query("BEGIN");
     
     const transResult = await client.query(
-      "INSERT INTO transactions (type, total_amount, description) VALUES ('expense', $1, $2) RETURNING id",
+      "INSERT INTO transactions (type, total_amount, description, date) VALUES ('expense', $1, $2, timezone('Asia/Makassar', now())) RETURNING id",
       [amount, description]
     );
     const transaction_id = transResult.rows[0].id;
 
     await client.query(
-      "INSERT INTO expenses (category, amount, description) VALUES ($1, $2, $3)",
+      "INSERT INTO expenses (category, amount, description, date) VALUES ($1, $2, $3, timezone('Asia/Makassar', now()))",
       [category, amount, description]
     );
 
     await client.query(
-      "INSERT INTO journal_entries (description, account_name, debit, transaction_id) VALUES ($1, $2, $3, $4)",
+      "INSERT INTO journal_entries (description, account_name, debit, transaction_id, date) VALUES ($1, $2, $3, $4, timezone('Asia/Makassar', now()))",
       [description, category, amount, transaction_id]
     );
     await client.query(
-      "INSERT INTO journal_entries (description, account_name, credit, transaction_id) VALUES ($1, $2, $3, $4)",
+      "INSERT INTO journal_entries (description, account_name, credit, transaction_id, date) VALUES ($1, $2, $3, $4, timezone('Asia/Makassar', now()))",
       [description, 'Kas', amount, transaction_id]
     );
 
