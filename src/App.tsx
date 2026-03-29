@@ -17,7 +17,8 @@ import {
   Edit2,
   Trash2,
   X,
-  Search
+  Search,
+  Download
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { cn } from "@/src/lib/utils";
@@ -30,6 +31,33 @@ export default function App() {
   const [activeMenu, setActiveMenu] = useState<Menu>("kasir");
   const [fruits, setFruits] = useState<Fruit[]>([]);
   const [loading, setLoading] = useState(true);
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [showInstallBanner, setShowInstallBanner] = useState(false);
+
+  useEffect(() => {
+    const handler = (e: any) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+      setShowInstallBanner(true);
+    };
+
+    window.addEventListener('beforeinstallprompt', handler);
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handler);
+    };
+  }, []);
+
+  const handleInstallClick = async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === 'accepted') {
+      console.log('User accepted the install prompt');
+    }
+    setDeferredPrompt(null);
+    setShowInstallBanner(false);
+  };
 
   useEffect(() => {
     fetchFruits();
@@ -76,6 +104,35 @@ export default function App() {
           </div>
         </div>
       </header>
+
+      {/* PWA Install Banner */}
+      {showInstallBanner && (
+        <div className="bg-[#1A1A1A] text-white p-3 flex items-center justify-between border-b border-white/10">
+          <div className="flex items-center gap-3">
+            <div className="bg-yellow-400 p-1.5 rounded-lg text-black">
+              <Download size={16} />
+            </div>
+            <div>
+              <p className="text-xs font-bold">Gunakan sebagai Aplikasi</p>
+              <p className="text-[10px] opacity-70">Akses lebih cepat & layar penuh</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <button 
+              onClick={() => setShowInstallBanner(false)}
+              className="px-3 py-1.5 text-[10px] font-bold opacity-70"
+            >
+              Nanti
+            </button>
+            <button 
+              onClick={handleInstallClick}
+              className="px-4 py-1.5 bg-yellow-400 text-black rounded-lg text-[10px] font-black uppercase"
+            >
+              Install
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Main Content Area - Reduced Padding */}
       <main className="flex-1 p-4 sm:p-6 pb-20 sm:pb-24 overflow-y-auto">
