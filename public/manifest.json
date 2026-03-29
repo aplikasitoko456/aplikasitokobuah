@@ -1,0 +1,17 @@
+{
+  "name": "Toko Buah Sumber",
+  "short_name": "Toko Buah",
+  "description": "Aplikasi manajemen toko buah dengan fitur kasir, inventaris FIFO, dan laporan keuangan akuntansi.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F8F9FA",
+  "theme_color": "#1A1A1A",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/3194/3194591.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
